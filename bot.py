@@ -7,6 +7,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import modules.chat_rights as rights
 from modules.commands_list import CMD_LIST
 from handlers.common import register_handlers_common
+from handlers.menu_controller import register_handlers_menu_controller
 
 bot = Bot(token=config.TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -32,6 +33,7 @@ async def main():
     dp.filters_factory.bind(rights.IsPrivate)
 
     register_handlers_common(dp)
+    register_handlers_menu_controller(dp)
 
     await set_commands(bot)
     await dp.skip_updates()

@@ -1,5 +1,6 @@
 
 
+
 class Soldier:
 
 
@@ -20,7 +21,7 @@ class Soldier:
 def main():
     x = input()
     if '/new' in x:
-        name = x[x.find(' ')+1:]
+        name = x[x.find(' ' ) +1:]
         hero = Soldier(name, 1, None, None)
         hero.info()
 

@@ -2,7 +2,13 @@ import logging
 import json
 from datetime import datetime
 from aiogram import Dispatcher, types
+
+from aiogram.types import ReplyKeyboardRemove, \
+    ReplyKeyboardMarkup, KeyboardButton, \
+    InlineKeyboardMarkup, InlineKeyboardButton
+
 from modules.commands_list import CMD_LIST
+from modules.buttons_list import start_kb, menu_kb
 
 
 def get_info_about_user(message):
@@ -28,10 +34,21 @@ async def cmd_list(message: types.Message):
 
 async def cmd_start(message: types.Message):
     print(get_info_about_user(message))
-    await message.reply(
-        "Просто старт, не коксайз конечно но вот список команд /commands\n\nНовые прогнозы доступны черел пару часов")
+    await message.answer("Хеллоу, нажми кнопку 'Menu' чтобы посмотреть на доступные команды", reply_markup=start_kb)
+
+#
+# async def cmd_menu(message: types.Message):
+#     print(get_info_about_user(message))
+#     await message.answer("Меню управления игры:", reply_markup=start_kb)
+
+
+async def cmd_cancel(message: types.Message):
+    print(get_info_about_user(message))
+    await message.reply("Клавиатура удалена", reply_markup=ReplyKeyboardRemove())
 
 
 def register_handlers_common(dp: Dispatcher):
     dp.register_message_handler(cmd_start, commands="start")
+    # dp.register_message_handler(cmd_menu, text="Menu")
+    dp.register_message_handler(cmd_cancel, commands="cancel")
     dp.register_message_handler(cmd_list, commands='commands')
