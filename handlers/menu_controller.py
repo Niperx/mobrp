@@ -1,4 +1,5 @@
 import logging
+import random
 from datetime import datetime
 from aiogram import Dispatcher, types
 
@@ -22,40 +23,41 @@ def get_info_about_user(message):
     return text
 
 
-async def cmd_menu(message: types.Message):
-    print(get_info_about_user(message))
-    await message.answer("Меню управления игры:", reply_markup=soldier_kb)
+async def process_btn_menu(callback_query: types.CallbackQuery):
+    x = "*Меню управления игры*"
+    await callback_query.message.edit_text(x, reply_markup=menu_kb, parse_mode= 'Markdown')
+
+zv = ['Рядовой', 'Ефрейтор', 'Мл. Сержант', 'Сержант', 'Ст. Сержант', 'Старшина', 'Прапорщик', 'Ст. Прапорщи']
+async def process_menu_btn1(callback_query: types.CallbackQuery):
+    info = callback_query.message.reply_markup.inline_keyboard[0][0].text
+    info = f'*{callback_query.message.text}  →  {info}*'
+    health, attack, mood, stamina = 50, 20, 50, 0
+    info += f'\n*Здоровье:* {health}\n*Атака:* {attack}\n*Настрой:* {mood}'
+    info += f'\n*Выносливость:* {stamina}\n*Звание:* {random.choice(zv)}'
+    await callback_query.message.edit_text(info, reply_markup=soldier_kb, parse_mode='Markdown')
 
 
-async def process_btn_menu(callback_query: types.CallbackQuery):  # сделать считывание текста кнопки и встраивание в edit.text
-    x = "Меню управления игры:"
-    await callback_query.message.edit_text(x, reply_markup=menu_kb)
+async def process_menu_btn2(callback_query: types.CallbackQuery):
+    info = callback_query.message.reply_markup.inline_keyboard[0][0].text
+    info = f'*{callback_query.message.text}  →  {info}*'
+    await callback_query.message.edit_text(info, reply_markup=quests_kb, parse_mode= 'Markdown')
 
 
-async def process_menu_btn1(callback_query: types.CallbackQuery):  # сделать считывание текста кнопки и встраивание в edit.text
-    x = 'Призывник:'
-    await callback_query.message.edit_text(x, reply_markup=soldier_kb)
+async def process_menu_btn3(callback_query: types.CallbackQuery):
+    info = callback_query.message.reply_markup.inline_keyboard[0][0].text
+    info = f'*{callback_query.message.text}  →  {info}*'
+    await callback_query.message.edit_text(info, reply_markup=inv_kb, parse_mode= 'Markdown')
 
 
-async def process_menu_btn2(callback_query: types.CallbackQuery):  # сделать считывание текста кнопки и встраивание в edit.text
-    x = 'Задания:'
-    await callback_query.message.edit_text(x, reply_markup=quests_kb)
-
-
-async def process_menu_btn3(callback_query: types.CallbackQuery):  # сделать считывание текста кнопки и встраивание в edit.text
-    x = 'Инвентарь:'
-    await callback_query.message.edit_text(x, reply_markup=inv_kb)
-
-
-async def process_menu_btn4(callback_query: types.CallbackQuery):  # сделать считывание текста кнопки и встраивание в edit.text
-    await callback_query.message.edit_text('Ушёл на отдых')
+async def process_menu_btn4(callback_query: types.CallbackQuery):
+    info = callback_query.message.reply_markup.inline_keyboard[0][0].text
+    info = f'*{callback_query.message.text} → {info}*\nОтдых будет составлять N часов, уверены?'
+    await callback_query.message.edit_text(info, reply_markup=chill_kb, parse_mode= 'Markdown')
 
 
 def register_handlers_menu_controller(dp: Dispatcher):
-    dp.register_message_handler(cmd_menu, text="Menu")
-    # dp.register_callback_query_handler(lambda c: c.data == 'btn_menu', process_btn_menu)
-    dp.register_callback_query_handler('menu_btn1', process_menu_btn1)
-
-    dp.register_callback_query_handler(lambda c: c.data == 'menu_btn2', process_menu_btn2)
-    dp.register_callback_query_handler(lambda c: c.data == 'menu_btn3', process_menu_btn3)
-    dp.register_callback_query_handler(lambda c: c.data == 'menu_btn4', process_menu_btn4)
+    dp.register_callback_query_handler(process_btn_menu, lambda c: c.data == 'btn_menu')
+    dp.register_callback_query_handler(process_menu_btn1, lambda c: c.data == 'menu_btn1')
+    dp.register_callback_query_handler(process_menu_btn2, lambda c: c.data == 'menu_btn2')
+    dp.register_callback_query_handler(process_menu_btn3, lambda c: c.data == 'menu_btn3')
+    dp.register_callback_query_handler(process_menu_btn4, lambda c: c.data == 'menu_btn4')

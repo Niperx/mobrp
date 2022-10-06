@@ -36,10 +36,10 @@ async def cmd_start(message: types.Message):
     print(get_info_about_user(message))
     await message.answer("Хеллоу, нажми кнопку 'Menu' чтобы посмотреть на доступные команды", reply_markup=start_kb)
 
-#
-# async def cmd_menu(message: types.Message):
-#     print(get_info_about_user(message))
-#     await message.answer("Меню управления игры:", reply_markup=start_kb)
+
+async def cmd_menu(message: types.Message):
+    print(get_info_about_user(message))
+    await message.answer("*Меню управления игры*", reply_markup=menu_kb, parse_mode= 'Markdown')
 
 
 async def cmd_cancel(message: types.Message):
@@ -49,6 +49,6 @@ async def cmd_cancel(message: types.Message):
 
 def register_handlers_common(dp: Dispatcher):
     dp.register_message_handler(cmd_start, commands="start")
-    # dp.register_message_handler(cmd_menu, text="Menu")
+    dp.register_message_handler(cmd_menu, text="Menu")
     dp.register_message_handler(cmd_cancel, commands="cancel")
     dp.register_message_handler(cmd_list, commands='commands')
