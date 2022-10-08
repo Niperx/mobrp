@@ -1,24 +1,6 @@
-import random
 import sqlite3
 from datetime import datetime
 
-
-# def create_db():  # Создание таблицы в БД (одноразовая функция)
-#     conn = sqlite3.connect('../db/main.db')
-#     cur = conn.cursor()
-#     cur.execute("""CREATE TABLE IF NOT EXISTS users(
-#         user_id INT PRIMARY KEY,
-#         name TEXT,
-#         health INT,
-#         attack INT,
-#         mood INT,
-#         skill INT,
-#         stamina INT,
-#         rank TEXT,
-#         soldiers_count INT,
-#         reg_time TEXT);
-#     """)
-#     conn.commit()
 
 def check_count(user_id):  # кол-во солдат на текущем пользователе
     conn = sqlite3.connect('db/main.db')
@@ -96,7 +78,7 @@ class Soldier:
 
 
 def main():
-    delete_soldier(190112213)
+    pass
 
 
 if __name__ == "__main__":

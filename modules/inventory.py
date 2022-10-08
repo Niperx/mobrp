@@ -32,16 +32,7 @@ def get_info_about_item(item_id):
         return item
     else:
         return False
-# if items:
-    #     for num, item in enumerate(items):
-    #         print(num)
-    #         item_info = inventory.get_info_about_item(item[0])
-    #         button_name = f'{item_info[1]} || {item[2]} шт.'
-    #         buttons.append(InlineKeyboardButton(button_name, callback_data=f'inv_btn{num+1}]'))
-    #     for bt in range(count_items % 3 + 1):
-    #         for i in buttons:
-    #
-    #     inv_kb.add(InlineKeyboardButton('Меню', callback_data='btn_menu'))
+
 
 # Проверять наличие солдата в мейн коде, ну и при смерти удалять все предметы
 def get_items(user_id):
@@ -73,9 +64,7 @@ class Item:
 
 
 def main():
-    # add_items(190112213)
-    print(get_items(190112213))
-    # print(get_info_about_item(1))
+    pass
 
 
 if __name__ == "__main__":
