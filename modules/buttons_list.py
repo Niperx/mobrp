@@ -14,20 +14,18 @@ menu_kb = InlineKeyboardMarkup()
 menu_kb.row(menu_btn1, menu_btn2)
 menu_kb.row(menu_btn3, menu_btn4)
 
-# Клавиатура призывника
+# Клавиатура призывника (есть)
 soldier_btn_menu = InlineKeyboardButton('Меню', callback_data='btn_menu')
 soldier_kb = InlineKeyboardMarkup()
 soldier_kb.row(soldier_btn_menu)
 
 # Клавиатура заданий
-quests_btn1 = InlineKeyboardButton('Задание 1', callback_data='quests_btn1')
-quests_btn2 = InlineKeyboardButton('Задание 2', callback_data='quests_btn2')
-quests_btn3 = InlineKeyboardButton('Задание 3', callback_data='quests_btn3')
-quests_btn4 = InlineKeyboardButton('Задание 4', callback_data='quests_btn4')
+quests_btn1 = InlineKeyboardButton('Тыл', callback_data='quests_btn_easy')
+quests_btn2 = InlineKeyboardButton('Наступление', callback_data='quests_btn_medium')
+quests_btn3 = InlineKeyboardButton('Диверсия', callback_data='quests_btn_hard')
 quests_btn_menu = InlineKeyboardButton('Меню', callback_data='btn_menu')
 quests_kb = InlineKeyboardMarkup()
-quests_kb.row(quests_btn1, quests_btn2)
-quests_kb.row(quests_btn3, quests_btn4)
+quests_kb.row(quests_btn1, quests_btn2, quests_btn3)
 quests_kb.row(quests_btn_menu)
 
 # Клавиатура инвентаря
@@ -43,6 +41,6 @@ inv_kb.row(inv_btn_menu)
 
 # Клавиатура отдыха
 chill_btn1 = InlineKeyboardButton('Да', callback_data='chill_btn1')
-chill_btn_menu = InlineKeyboardButton('Назад в меню', callback_data='btn_menu')
+chill_btn_menu = InlineKeyboardButton('Меню', callback_data='btn_menu')
 chill_kb = InlineKeyboardMarkup()
 chill_kb.row(chill_btn1, chill_btn_menu)
