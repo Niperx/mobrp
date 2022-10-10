@@ -12,6 +12,7 @@ import modules.inventory as inventory
 
 class CompetitionStage(StatesGroup):
     waiting_for_name = State()
+    waiting_for_chill = State()
 
 
 def get_info_about_user(message):
@@ -112,6 +113,23 @@ async def process_menu_btn4(callback_query: types.CallbackQuery):
     await callback_query.message.edit_text(info, reply_markup=chill_kb, parse_mode='Markdown')
 
 
+async def process_chill_btn(callback_query: types.CallbackQuery, state: FSMContext):
+    # info = callback_query.message.reply_markup.inline_keyboard[1][1].text
+    info = f'*Меню управления игры → Отдых*'
+
+    await CompetitionStage.waiting_for_chill.set()
+
+    text = f'{info}\nВы атдыхаете'
+    await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
+
+    await asyncio.sleep(10)
+
+    text = f'{info}\nВы поспали'
+    await callback_query.message.edit_text(text, reply_markup=chill_kb, parse_mode='Markdown')
+
+    await state.finish()
+
+
 def register_handlers_menu_controller(dp: Dispatcher):
     dp.register_message_handler(process_soldier_get_name, state=CompetitionStage.waiting_for_name)
     dp.register_callback_query_handler(process_btn_menu, lambda c: c.data == 'btn_menu', state='*')
@@ -120,3 +138,4 @@ def register_handlers_menu_controller(dp: Dispatcher):
     dp.register_callback_query_handler(process_menu_btn3, lambda c: c.data == 'menu_btn3')
     dp.register_callback_query_handler(process_menu_btn4, lambda c: c.data == 'menu_btn4')
     dp.register_callback_query_handler(process_inv_info_btn, lambda c: 'inv_info_btn' in c.data)
+    dp.register_callback_query_handler(process_chill_btn, lambda c: c.data == 'chill_btn1')
