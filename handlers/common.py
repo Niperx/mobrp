@@ -1,14 +1,11 @@
 import logging
-import json
 from datetime import datetime
 from aiogram import Dispatcher, types
 
-from aiogram.types import ReplyKeyboardRemove, \
-    ReplyKeyboardMarkup, KeyboardButton, \
-    InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardRemove
 
 from modules.commands_list import CMD_LIST
-from modules.buttons_list import start_kb, menu_kb
+from modules.buttons_list import start_kb, menu_kb, MenuStage
 
 
 def get_info_about_user(message):
@@ -39,7 +36,8 @@ async def cmd_start(message: types.Message):
 
 async def cmd_menu(message: types.Message):
     print(get_info_about_user(message))
-    await message.answer("*Меню управления игры*", reply_markup=menu_kb, parse_mode= 'Markdown')
+    await MenuStage.menu.set()
+    await message.answer("*Меню управления игры*", reply_markup=menu_kb, parse_mode='Markdown')
 
 
 async def cmd_cancel(message: types.Message):

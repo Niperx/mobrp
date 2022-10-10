@@ -1,6 +1,13 @@
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ReplyKeyboardRemove, \
     ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
+
+class MenuStage(StatesGroup):
+    menu = State()
+    waiting_for_name = State()
+    waiting_for_chill = State()
 
 # Клавиатура обычная с кнопкой "Меню"
 start_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Menu'))

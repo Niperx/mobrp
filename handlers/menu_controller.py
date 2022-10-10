@@ -2,17 +2,11 @@ import logging
 import asyncio
 from datetime import datetime
 from aiogram import Dispatcher, types
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from modules.buttons_list import *
+
 import modules.soldier as soldier
 import modules.inventory as inventory
-
-
-class CompetitionStage(StatesGroup):
-    waiting_for_name = State()
-    waiting_for_chill = State()
 
 
 def get_info_about_user(message):
@@ -29,12 +23,11 @@ def get_info_about_user(message):
 
 
 async def process_btn_menu(callback_query: types.CallbackQuery, state: FSMContext):
-    await state.finish()
     x = "*Меню управления игры*"
     await callback_query.message.edit_text(x, reply_markup=menu_kb, parse_mode='Markdown')
 
 
-async def process_menu_btn1(callback_query: types.CallbackQuery):
+async def process_menu_btn1(callback_query: types.CallbackQuery, state: FSMContext):
     info = callback_query.message.reply_markup.inline_keyboard[0][0].text
     info = f'*{callback_query.message.text}  →  {info}*'
     user_id = callback_query.from_user.id
@@ -42,7 +35,7 @@ async def process_menu_btn1(callback_query: types.CallbackQuery):
     if cnt == 0:
         text = f'{info}\n\nСолдат отсутствует, погодите пару секунд, мобилизируем для вас одного\n\nДайте ему новое *ИМЯ*:\n_(Напишите в сообщении)_'
         await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
-        await CompetitionStage.waiting_for_name.set()
+        await state.set_state(MenuStage.waiting_for_name)
     else:
         user_info = soldier.load_soldier(user_id)
         sd = soldier.Soldier(user_info)
@@ -53,7 +46,7 @@ async def process_menu_btn1(callback_query: types.CallbackQuery):
 
 async def process_soldier_get_name(message: types.Message, state: FSMContext):
     name = message.text.lower()  # Можно сделать функцию обработчик валидности ника
-    await state.finish()
+    await state.set_state(MenuStage.menu)
     soldier.create_soldier(message.from_user.id, name)
     await message.answer("*Меню управления игры*", reply_markup=menu_kb, parse_mode='Markdown')
 
@@ -117,25 +110,26 @@ async def process_chill_btn(callback_query: types.CallbackQuery, state: FSMConte
     # info = callback_query.message.reply_markup.inline_keyboard[1][1].text
     info = f'*Меню управления игры → Отдых*'
 
-    await CompetitionStage.waiting_for_chill.set()
+    # await state.set_state(MenuStage.waiting_for_chill)
 
     text = f'{info}\nВы атдыхаете'
     await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
 
-    await asyncio.sleep(10)
+    await asyncio.sleep(30)
 
     text = f'{info}\nВы поспали'
     await callback_query.message.edit_text(text, reply_markup=chill_kb, parse_mode='Markdown')
 
-    await state.finish()
+    # await state.set_state(MenuStage.menu)
 
 
 def register_handlers_menu_controller(dp: Dispatcher):
-    dp.register_message_handler(process_soldier_get_name, state=CompetitionStage.waiting_for_name)
-    dp.register_callback_query_handler(process_btn_menu, lambda c: c.data == 'btn_menu', state='*')
-    dp.register_callback_query_handler(process_menu_btn1, lambda c: c.data == 'menu_btn1')
-    dp.register_callback_query_handler(process_menu_btn2, lambda c: c.data == 'menu_btn2')
-    dp.register_callback_query_handler(process_menu_btn3, lambda c: c.data == 'menu_btn3')
-    dp.register_callback_query_handler(process_menu_btn4, lambda c: c.data == 'menu_btn4')
-    dp.register_callback_query_handler(process_inv_info_btn, lambda c: 'inv_info_btn' in c.data)
-    dp.register_callback_query_handler(process_chill_btn, lambda c: c.data == 'chill_btn1')
+    dp.register_message_handler(process_soldier_get_name, state=MenuStage.waiting_for_name)
+    dp.register_callback_query_handler(process_btn_menu, lambda c: c.data == 'btn_menu', state=MenuStage.menu)
+    dp.register_callback_query_handler(process_btn_menu, lambda c: c.data == 'btn_menu', state=MenuStage.waiting_for_name)
+    dp.register_callback_query_handler(process_menu_btn1, lambda c: c.data == 'menu_btn1', state=MenuStage.menu)
+    dp.register_callback_query_handler(process_menu_btn2, lambda c: c.data == 'menu_btn2', state=MenuStage.menu)
+    dp.register_callback_query_handler(process_menu_btn3, lambda c: c.data == 'menu_btn3', state=MenuStage.menu)
+    dp.register_callback_query_handler(process_menu_btn4, lambda c: c.data == 'menu_btn4', state=MenuStage.menu)
+    dp.register_callback_query_handler(process_inv_info_btn, lambda c: 'inv_info_btn' in c.data, state=MenuStage.menu)
+    dp.register_callback_query_handler(process_chill_btn, lambda c: c.data == 'chill_btn1', state=MenuStage.menu)
