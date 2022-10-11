@@ -1,6 +1,4 @@
-import logging
 import asyncio
-from datetime import datetime
 from aiogram import Dispatcher, types
 
 from modules.buttons_list import *
@@ -9,20 +7,7 @@ import modules.soldier as soldier
 import modules.inventory as inventory
 
 
-def get_info_about_user(message):
-    text = f'\n##### {datetime.now()} #####\n'
-    text += f'ID: {message.from_user.id}, Text: {message.text}'
-    try:
-        text += f'\nUsername: {message.from_user.username},' \
-                f' Name: {message.from_user.first_name},' \
-                f' Surname: {message.from_user.last_name} '
-    except Exception as e:
-        logging.exception(e)
-        text += 'Нет имени'
-    return text
-
-
-async def process_btn_menu(callback_query: types.CallbackQuery, state: FSMContext):
+async def process_btn_menu(callback_query: types.CallbackQuery):
     x = "*Меню управления игры*"
     await callback_query.message.edit_text(x, reply_markup=menu_kb, parse_mode='Markdown')
 
@@ -118,13 +103,13 @@ async def process_chill_btn(callback_query: types.CallbackQuery, state: FSMConte
 
     await asyncio.sleep(30)
 
-    text = f'{info}\nВы поспали'
+    text = f'{info}\nВы поспали, +Х выносливости'
     await callback_query.message.edit_text(text, reply_markup=chill_kb, parse_mode='Markdown')
 
     await state.set_state(MenuStage.menu)
 
 
-def register_handlers_menu_controller(dp: Dispatcher):
+def register_handlers_menu_set(dp: Dispatcher):
     dp.register_message_handler(process_soldier_get_name, state=MenuStage.waiting_for_name)
     dp.register_callback_query_handler(process_btn_menu, lambda c: c.data == 'btn_menu', state=MenuStage.waiting_for_name)
     # Кнопки состояния "Меню"
@@ -135,5 +120,3 @@ def register_handlers_menu_controller(dp: Dispatcher):
     dp.register_callback_query_handler(process_menu_btn4, lambda c: c.data == 'menu_btn4', state=MenuStage.menu)
     dp.register_callback_query_handler(process_inv_info_btn, lambda c: 'inv_info_btn' in c.data, state=MenuStage.menu)
     dp.register_callback_query_handler(process_chill_btn, lambda c: c.data == 'chill_btn1', state=MenuStage.menu)
-    # Кнопки состояния "Отдых"
-

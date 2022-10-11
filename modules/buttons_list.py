@@ -4,10 +4,13 @@ from aiogram.types import ReplyKeyboardRemove, \
     ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
 
+
 class MenuStage(StatesGroup):
     menu = State()
     waiting_for_name = State()
     chill = State()
+    fight = State()
+
 
 # Клавиатура обычная с кнопкой "Меню"
 start_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Menu'))
@@ -48,7 +51,13 @@ inv_kb.row(inv_btn3, inv_btn4)
 inv_kb.row(inv_btn_menu)
 
 # Клавиатура отдыха
-chill_btn1 = InlineKeyboardButton('Да', callback_data='chill_btn1')
+chill_btn = InlineKeyboardButton('Отдохнуть', callback_data='chill_btn1')
 chill_btn_menu = InlineKeyboardButton('Меню', callback_data='btn_menu')
 chill_kb = InlineKeyboardMarkup()
-chill_kb.row(chill_btn1, chill_btn_menu)
+chill_kb.row(chill_btn, chill_btn_menu)
+
+# Клавиатура в бой
+fight_btn = InlineKeyboardButton('В бой', callback_data='fight_btn')
+fight_btn_menu = InlineKeyboardButton('Меню', callback_data='btn_menu')
+fight_kb = InlineKeyboardMarkup()
+fight_kb.row(fight_btn, fight_btn_menu)

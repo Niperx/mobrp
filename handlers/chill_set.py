@@ -22,15 +22,14 @@ def get_info_about_user(message):
     return text
 
 
-async def process_btn_menu(callback_query: types.CallbackQuery, state: FSMContext):
+async def process_btn_menu(callback_query: types.CallbackQuery):
     x = "*Меню управления игры*"
     await callback_query.message.edit_text(x, reply_markup=menu_kb, parse_mode='Markdown')
 
 
 # Кнопка "Призывник" / Состояние "Меню"
 async def process_menu_btn1(callback_query: types.CallbackQuery, state: FSMContext):
-    info = callback_query.message.reply_markup.inline_keyboard[0][0].text
-    info = f'*{callback_query.message.text}  →  {info}*'
+    info = f'*Меню управления игры  →  Призывник*'
     user_id = callback_query.from_user.id
     cnt = soldier.check_count(user_id)
     if cnt == 0:
@@ -54,8 +53,7 @@ async def process_soldier_get_name(message: types.Message, state: FSMContext):
 
 # Кнопка "Задания" / Состояние "Меню"
 async def process_menu_btn2(callback_query: types.CallbackQuery):
-    info = callback_query.message.reply_markup.inline_keyboard[0][1].text
-    info = f'*{callback_query.message.text}  →  {info}*'
+    info = f'*Меню управления игры  →  Задания*'
 
     user_id = callback_query.from_user.id
     cnt = soldier.check_count(user_id)
@@ -69,8 +67,7 @@ async def process_menu_btn2(callback_query: types.CallbackQuery):
 
 # Кнопка "Инвентарь" / Состояние "Меню"
 async def process_menu_btn3(callback_query: types.CallbackQuery):
-    info = callback_query.message.reply_markup.inline_keyboard[1][0].text
-    info = f'*{callback_query.message.text}  →  {info}*'
+    info = f'*Меню управления игры  →  Инвентарь*'
 
     user_id = callback_query.from_user.id
     cnt = soldier.check_count(user_id)
@@ -106,7 +103,7 @@ async def process_inv_info_btn(callback_query: types.CallbackQuery):
 
 # Кнопка "Отдых" / Состояние "Меню"
 async def process_menu_btn4(callback_query: types.CallbackQuery):
-    info = callback_query.message.reply_markup.inline_keyboard[1][1].text
+    info = f'*Меню управления игры  →  Отдых*'
     info = f'*{callback_query.message.text} → {info}*\nВы отдыхаете на текущий момент'
     await callback_query.message.edit_text(info, reply_markup=soldier_kb, parse_mode='Markdown')
 
