@@ -7,7 +7,7 @@ from aiogram.types import ReplyKeyboardRemove, \
 class MenuStage(StatesGroup):
     menu = State()
     waiting_for_name = State()
-    waiting_for_chill = State()
+    chill = State()
 
 # Клавиатура обычная с кнопкой "Меню"
 start_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton('Menu'))

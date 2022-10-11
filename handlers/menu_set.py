@@ -27,6 +27,7 @@ async def process_btn_menu(callback_query: types.CallbackQuery, state: FSMContex
     await callback_query.message.edit_text(x, reply_markup=menu_kb, parse_mode='Markdown')
 
 
+# Кнопка "Призывник" / Состояние "Меню"
 async def process_menu_btn1(callback_query: types.CallbackQuery, state: FSMContext):
     info = callback_query.message.reply_markup.inline_keyboard[0][0].text
     info = f'*{callback_query.message.text}  →  {info}*'
@@ -51,6 +52,7 @@ async def process_soldier_get_name(message: types.Message, state: FSMContext):
     await message.answer("*Меню управления игры*", reply_markup=menu_kb, parse_mode='Markdown')
 
 
+# Кнопка "Задания" / Состояние "Меню"
 async def process_menu_btn2(callback_query: types.CallbackQuery):
     info = callback_query.message.reply_markup.inline_keyboard[0][1].text
     info = f'*{callback_query.message.text}  →  {info}*'
@@ -65,6 +67,7 @@ async def process_menu_btn2(callback_query: types.CallbackQuery):
         await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
 
 
+# Кнопка "Инвентарь" / Состояние "Меню"
 async def process_menu_btn3(callback_query: types.CallbackQuery):
     info = callback_query.message.reply_markup.inline_keyboard[1][0].text
     info = f'*{callback_query.message.text}  →  {info}*'
@@ -90,6 +93,7 @@ async def process_menu_btn3(callback_query: types.CallbackQuery):
         await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
 
 
+# Кнопка (Предмет) / Состояние "Меню"
 async def process_inv_info_btn(callback_query: types.CallbackQuery):
     info = f'*{callback_query.message.text}*'
     data = callback_query.data
@@ -100,6 +104,7 @@ async def process_inv_info_btn(callback_query: types.CallbackQuery):
         reply_markup=soldier_kb, parse_mode='Markdown')
 
 
+# Кнопка "Отдых" / Состояние "Меню"
 async def process_menu_btn4(callback_query: types.CallbackQuery):
     info = callback_query.message.reply_markup.inline_keyboard[1][1].text
     info = f'*{callback_query.message.text} → {info}*\nОтдых будет составлять 3 часа, уверены?'
@@ -110,7 +115,7 @@ async def process_chill_btn(callback_query: types.CallbackQuery, state: FSMConte
     # info = callback_query.message.reply_markup.inline_keyboard[1][1].text
     info = f'*Меню управления игры → Отдых*'
 
-    # await state.set_state(MenuStage.waiting_for_chill)
+    await state.set_state(MenuStage.chill)
 
     text = f'{info}\nВы атдыхаете'
     await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
@@ -120,16 +125,19 @@ async def process_chill_btn(callback_query: types.CallbackQuery, state: FSMConte
     text = f'{info}\nВы поспали'
     await callback_query.message.edit_text(text, reply_markup=chill_kb, parse_mode='Markdown')
 
-    # await state.set_state(MenuStage.menu)
+    await state.set_state(MenuStage.menu)
 
 
 def register_handlers_menu_controller(dp: Dispatcher):
     dp.register_message_handler(process_soldier_get_name, state=MenuStage.waiting_for_name)
-    dp.register_callback_query_handler(process_btn_menu, lambda c: c.data == 'btn_menu', state=MenuStage.menu)
     dp.register_callback_query_handler(process_btn_menu, lambda c: c.data == 'btn_menu', state=MenuStage.waiting_for_name)
+    # Кнопки состояния "Меню"
+    dp.register_callback_query_handler(process_btn_menu, lambda c: c.data == 'btn_menu', state=MenuStage.menu)
     dp.register_callback_query_handler(process_menu_btn1, lambda c: c.data == 'menu_btn1', state=MenuStage.menu)
     dp.register_callback_query_handler(process_menu_btn2, lambda c: c.data == 'menu_btn2', state=MenuStage.menu)
     dp.register_callback_query_handler(process_menu_btn3, lambda c: c.data == 'menu_btn3', state=MenuStage.menu)
     dp.register_callback_query_handler(process_menu_btn4, lambda c: c.data == 'menu_btn4', state=MenuStage.menu)
     dp.register_callback_query_handler(process_inv_info_btn, lambda c: 'inv_info_btn' in c.data, state=MenuStage.menu)
     dp.register_callback_query_handler(process_chill_btn, lambda c: c.data == 'chill_btn1', state=MenuStage.menu)
+    # Кнопки состояния "Отдых"
+
