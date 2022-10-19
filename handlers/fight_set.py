@@ -21,11 +21,9 @@ async def process_quests_btn_easy(callback_query: types.CallbackQuery):
     await callback_query.message.edit_text(text, reply_markup=fight_kb, parse_mode='Markdown')
 
 
-async def process_fight_btn(callback_query: types.CallbackQuery, state: FSMContext):
+async def process_fight_btn(callback_query: types.CallbackQuery):
     info = f'*Тыл  →  Выполнение...*'
     user_id = callback_query.from_user.id
-
-    await state.set_state(MenuStage.fight)
 
     text = f'{info}\n\nВы на задании, время ожидания 5 часов (30 сек)'
     await callback_query.message.edit_text(text, parse_mode='Markdown')
@@ -70,7 +68,6 @@ async def process_fight_btn(callback_query: types.CallbackQuery, state: FSMConte
             soldier.delete_soldier(user_id)
             await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
 
-        await state.set_state(MenuStage.menu)
     else:
         text = f'{info}\nНедостаточно стамины, {sd.stamina} из {stamina_request}'
         await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
@@ -78,7 +75,6 @@ async def process_fight_btn(callback_query: types.CallbackQuery, state: FSMConte
 
 def register_handlers_fight_set(dp: Dispatcher):
     # Кнопки состояния "Отдых"
-    dp.register_callback_query_handler(process_quests_btn_easy, lambda c: c.data == 'quests_btn_easy', state=MenuStage.menu)
-    dp.register_callback_query_handler(process_fight_btn, lambda c: c.data == 'fight_btn',
-                                       state=MenuStage.menu)
+    dp.register_callback_query_handler(process_quests_btn_easy, lambda c: c.data == 'quests_btn_easy')
+    dp.register_callback_query_handler(process_fight_btn, lambda c: c.data == 'fight_btn')
 

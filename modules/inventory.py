@@ -46,7 +46,7 @@ def get_items(user_id):
         return False
 
 
-class Item:
+class Item:  # юзлес, т.к. вещи добавляются от руки в БД и от их лица ничего не происходит
 
     def __init__(self, info):
         self.item_id = info[0]

@@ -36,7 +36,6 @@ async def cmd_start(message: types.Message):
 
 async def cmd_menu(message: types.Message):
     print(get_info_about_user(message))
-    await MenuStage.menu.set()
     await message.answer("*Меню управления игры*", reply_markup=menu_kb, parse_mode='Markdown')
 
 

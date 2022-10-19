@@ -6,10 +6,7 @@ from aiogram.types import ReplyKeyboardRemove, \
 
 
 class MenuStage(StatesGroup):
-    menu = State()
     waiting_for_name = State()
-    chill = State()
-    fight = State()
 
 
 # Клавиатура обычная с кнопкой "Меню"
