@@ -96,17 +96,35 @@ async def process_menu_btn4(callback_query: types.CallbackQuery):
 async def process_chill_btn(callback_query: types.CallbackQuery, state: FSMContext):
     info = f'*Меню управления игры → Отдых*'
 
-    await state.set_state(MenuStage.chill)
+    user_id = callback_query.from_user.id
+    cnt = soldier.check_count(user_id)
+    if cnt:
+        user_info = soldier.load_soldier(user_id)
+        sd = soldier.Soldier(user_info)
+        if sd.stamina <= 30:
+            await state.set_state(MenuStage.chill)
+            sd.stamina = 30
+            sd.upload_info()
+            text = f'{info}\nВы отдыхаете'
+            await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
 
-    text = f'{info}\nВы атдыхаете'
-    await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
+            await asyncio.sleep(10)
 
-    await asyncio.sleep(30)
+            text = f'{info}\nВы поспали, +30 выносливости ({sd.stamina})'
+            await callback_query.message.edit_text(text, reply_markup=chill_kb, parse_mode='Markdown')
+            await state.set_state(MenuStage.menu)
+        else:
+            text = f'{info}\n\nУ вас максимум выносливости.'
+            await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
+    else:
+        text = f'{info}\n\nУ вас отсутствует нанятый солдат, перейдите во вкладку *Призывники* в главном меню'
+        await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
 
-    text = f'{info}\nВы поспали, +Х выносливости'
-    await callback_query.message.edit_text(text, reply_markup=chill_kb, parse_mode='Markdown')
 
-    await state.set_state(MenuStage.menu)
+
+
+
+
 
 
 def register_handlers_menu_set(dp: Dispatcher):

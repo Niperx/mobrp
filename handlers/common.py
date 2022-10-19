@@ -46,7 +46,7 @@ async def cmd_cancel(message: types.Message):
 
 
 def register_handlers_common(dp: Dispatcher):
-    dp.register_message_handler(cmd_start, commands="start")
-    dp.register_message_handler(cmd_menu, text="Menu")
-    dp.register_message_handler(cmd_cancel, commands="cancel")
-    dp.register_message_handler(cmd_list, commands='commands')
+    dp.register_message_handler(cmd_start, commands="start", state='*')
+    dp.register_message_handler(cmd_menu, text="Menu", state='*')
+    dp.register_message_handler(cmd_cancel, commands="cancel", state='*')
+    dp.register_message_handler(cmd_list, commands='commands', state='*')

@@ -11,7 +11,7 @@ def check_count(user_id):  # кол-во солдат на текущем пол
 
 
 def create_soldier(user_id, name):
-    health, attack, mood, skill, stamina, exp = 50, 20, 50, 0, 30, 0
+    health, attack, mood, skill, stamina, exp = 50, 20, 0, 0, 30, 0
     user_info = (user_id, name, health, attack, mood, skill, stamina, exp, datetime.now())
     conn = sqlite3.connect('db/main.db')
     cur = conn.cursor()
@@ -36,21 +36,22 @@ def delete_soldier(user_id):
 
 
 def get_rank(xp):
-    if 0 >= xp <= 100:
+    print('А ЭТО ЭКСПА', xp)
+    if 0 <= xp <= 100:
         rank = 'рядовой'
-    elif 101 >= xp <= 225:
+    elif 101 <= xp <= 225:
         rank = 'ефрейтор'
-    elif 226 >= xp <= 375:
+    elif 226 <= xp <= 375:
         rank = 'мл. сержант'
-    elif 376 >= xp <= 550:
+    elif 376 <= xp <= 550:
         rank = 'сержант'
-    elif 551 >= xp <= 750:
+    elif 551 <= xp <= 750:
         rank = 'ст. сержант'
-    elif 751 >= xp <= 975:
+    elif 751 <= xp <= 975:
         rank = 'старшина'
-    elif 976 >= xp <= 1225:
+    elif 976 <= xp <= 1225:
         rank = 'прапощик'
-    elif 1226 >= xp <= 1500:
+    elif 1226 <= xp <= 1500:
         rank = 'ст. прапощик'
     else:
         rank = False
@@ -75,6 +76,16 @@ class Soldier:
         print(f'Здоровье: {self.health}')
         print(f'Атака: {self.attack}')
         print(f'Звание: {self.exp}')
+
+    def upload_info(self):
+        conn = sqlite3.connect('db/main.db')
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE users SET name = ?, health = ?, attack = ?, mood = ?, skill = ?, stamina = ?, rank = ? WHERE user_id = ? ",
+            (self.name, self.health, self.attack, self.mood, self.skill, self.stamina, self.exp, self.user_id,))
+        conn.commit()
+
+
 
 
 def main():

@@ -104,7 +104,7 @@ async def process_inv_info_btn(callback_query: types.CallbackQuery):
 # Кнопка "Отдых" / Состояние "Меню"
 async def process_menu_btn4(callback_query: types.CallbackQuery):
     info = f'*Меню управления игры  →  Отдых*'
-    info = f'*{callback_query.message.text} → {info}*\nВы отдыхаете на текущий момент'
+    info = f'*{info}*\nВы отдыхаете на текущий момент'
     await callback_query.message.edit_text(info, reply_markup=soldier_kb, parse_mode='Markdown')
 
 
