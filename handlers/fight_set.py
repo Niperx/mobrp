@@ -47,7 +47,8 @@ async def process_fight_btn(callback_query: types.CallbackQuery):
 
     if soldier.check_state(user_id) == 'menu':  # проверка на свободное состояние
         # загрузка квеста и его параметров
-        quest_info = quest.load_quest(1)
+        qw_num = random.randint(1, 2) # рандом изи квестов, добавить выбор сложности
+        quest_info = quest.load_quest(qw_num)
         quest_succ = quest_info[5]
         stamina_request = quest_info[7]
         exp = [quest_info[4]-7, quest_info[4]+7]

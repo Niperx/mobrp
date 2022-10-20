@@ -24,7 +24,6 @@ def get_info_about_user(callback):
 
 async def process_btn_menu(callback_query: types.CallbackQuery):
     # -878891896
-    print(callback_query)
     print(get_info_about_user(callback_query))
     x = "*Меню управления игры*"
     await callback_query.message.edit_text(x, reply_markup=menu_kb, parse_mode='Markdown')

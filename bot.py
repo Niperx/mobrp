@@ -38,7 +38,7 @@ async def main():
     register_handlers_fight_set(dp)
 
     await set_commands(bot)
-    # await dp.skip_updates()
+    await dp.skip_updates()
     await dp.start_polling()
 
 
