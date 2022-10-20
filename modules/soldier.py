@@ -18,6 +18,13 @@ def check_state(user_id):  # проверка состояния персона�
     return state
 
 
+def set_state(user_id, state):  # установка состояния
+    conn = sqlite3.connect('db/main.db')
+    cur = conn.cursor()
+    cur.execute("UPDATE users SET state = ? WHERE user_id = ?", (state, user_id,))
+    conn.commit()
+
+
 def create_soldier(user_id, name):  # создание нового солдата для профиля
     health, attack, mood, skill, stamina, exp, state = 50, 20, 0, 0, 30, 0, 'menu'
     user_info = (user_id, name, health, attack, mood, skill, stamina, exp, state, datetime.now())

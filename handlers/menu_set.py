@@ -1,4 +1,6 @@
 import asyncio
+from datetime import datetime
+import logging
 from aiogram import Dispatcher, types
 
 from modules.buttons_list import *
@@ -7,13 +9,30 @@ import modules.soldier as soldier
 import modules.inventory as inventory
 
 
+def get_info_about_user(callback):
+    text = f'\n##### {datetime.now()} #####\n'
+    text += f'ID: {callback.from_user.id}, Text: {callback.data}'
+    try:
+        text += f'\nUsername: {callback.from_user.username},' \
+                f' Name: {callback.from_user.first_name},' \
+                f' Surname: {callback.from_user.last_name} '
+    except Exception as e:
+        logging.exception(e)
+        text += 'Нет имени'
+    return text
+
+
 async def process_btn_menu(callback_query: types.CallbackQuery):
+    # -878891896
+    print(callback_query)
+    print(get_info_about_user(callback_query))
     x = "*Меню управления игры*"
     await callback_query.message.edit_text(x, reply_markup=menu_kb, parse_mode='Markdown')
 
 
 # Кнопка "Призывник"
 async def process_menu_btn1(callback_query: types.CallbackQuery, state: FSMContext):
+    print(get_info_about_user(callback_query))
     info = f'*Меню управления игры  →  Призывник*'
     user_id = callback_query.from_user.id
     cnt = soldier.check_count(user_id)
@@ -34,10 +53,13 @@ async def process_soldier_get_name(message: types.Message, state: FSMContext):
     await state.finish()
     soldier.create_soldier(message.from_user.id, name)
     await message.answer("*Меню управления игры*", reply_markup=menu_kb, parse_mode='Markdown')
+    # test
+    # await message.send_copy(-878891896, f'Пользователь @{message.from_user.username} мобилизировал нового солдата под именем {name}')
 
 
 # Кнопка "Задания"
 async def process_menu_btn2(callback_query: types.CallbackQuery):
+    print(get_info_about_user(callback_query))
     info = f'*Меню управления игры  →  Задания*'
 
     user_id = callback_query.from_user.id
@@ -52,6 +74,7 @@ async def process_menu_btn2(callback_query: types.CallbackQuery):
 
 # Кнопка "Инвентарь"
 async def process_menu_btn3(callback_query: types.CallbackQuery):
+    print(get_info_about_user(callback_query))
     info = f'*Меню управления игры  →  Инвентарь*'
 
     user_id = callback_query.from_user.id
@@ -77,6 +100,7 @@ async def process_menu_btn3(callback_query: types.CallbackQuery):
 
 # Кнопка (Предмет)
 async def process_inv_info_btn(callback_query: types.CallbackQuery):
+    print(get_info_about_user(callback_query))
     info = f'*{callback_query.message.text}*'
     data = callback_query.data
     item = int(data[data.rfind('_') + 1:])
@@ -88,33 +112,43 @@ async def process_inv_info_btn(callback_query: types.CallbackQuery):
 
 # Кнопка "Отдых"
 async def process_menu_btn4(callback_query: types.CallbackQuery):
+    print(get_info_about_user(callback_query))
     info = f'*Меню управления игры  →  Отдых*'
     info = f'{info}\nОтдых будет составлять 3 часа, уверены?'
     await callback_query.message.edit_text(info, reply_markup=chill_kb, parse_mode='Markdown')
 
 
 async def process_chill_btn(callback_query: types.CallbackQuery, state: FSMContext):
+    print(get_info_about_user(callback_query))
     info = f'*Меню управления игры → Отдых*'
 
     user_id = callback_query.from_user.id
     cnt = soldier.check_count(user_id)
     if cnt:
-        user_info = soldier.load_soldier(user_id)
-        sd = soldier.Soldier(user_info)
-        if sd.stamina <= 30:
-            await state.set_state(MenuStage.chill)
-            sd.stamina = 30
-            sd.upload_info()
-            text = f'{info}\nВы отдыхаете'
-            await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
+        if soldier.check_state(user_id) == 'menu':
+            user_info = soldier.load_soldier(user_id)
+            sd = soldier.Soldier(user_info)
+            if sd.stamina < 30:
+                soldier.set_state(user_id, 'chill')
+                text = f'{info}\nВы отдыхаете'
+                await callback_query.message.edit_text(text, parse_mode='Markdown')
+                req_stamina = 30 - sd.stamina  # необходимая стамина для максимума
+                time_for_sleep = 360 * req_stamina  # правильная версия для сна
+                demo_time = 360 * req_stamina // 100  # укороченная версия в 10 раз
+                print('Время сна', demo_time)
+                await asyncio.sleep(demo_time)
 
-            await asyncio.sleep(10)
+                sd.stamina = 30
+                sd.upload_info()
 
-            text = f'{info}\nВы поспали, +30 выносливости ({sd.stamina})'
-            await callback_query.message.edit_text(text, reply_markup=chill_kb, parse_mode='Markdown')
-            await state.set_state(MenuStage.menu)
+                text = f'{info}\nВы поспали, +{req_stamina} выносливости'
+                await callback_query.message.edit_text(text, reply_markup=chill_kb, parse_mode='Markdown')
+                soldier.set_state(user_id, 'menu')
+            else:
+                text = f'{info}\n\nУ вас максимум выносливости.'
+                await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
         else:
-            text = f'{info}\n\nУ вас максимум выносливости.'
+            text = f'{info}\nВаш солдат на текущий момент уже занят'
             await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
     else:
         text = f'{info}\n\nУ вас отсутствует нанятый солдат, перейдите во вкладку *Призывники* в главном меню'
