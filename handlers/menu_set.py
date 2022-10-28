@@ -38,8 +38,8 @@ async def process_menu_btn1(callback_query: types.CallbackQuery, state: FSMConte
     if cnt:
         user_info = soldier.load_soldier(user_id)
         sd = soldier.Soldier(user_info)
-        text = f'{info}\n\n*Имя:* {sd.name.title()}\n*Здоровье:* {sd.health} | *Атака:* {sd.attack}'
-        text += f'\n*Настрой:* {sd.mood}\n*Выносливость:* {sd.stamina}\n*Звание:* {soldier.get_rank(sd.exp).title()}'
+        text = f'{info}\n\n*Имя:* {sd.name.title()}\n*Здоровье:* {sd.health} *|* *Атака:* {sd.attack}'
+        text += f'\n*Настрой:* {sd.mood} *|* *Выучка:* {sd.skill}\n*Выносливость:* {sd.stamina}\n*Звание:* {soldier.get_rank(sd.exp).title()}'
         await callback_query.message.edit_text(text, reply_markup=soldier_kb, parse_mode='Markdown')
     else:
         text = f'{info}\n\nСолдат отсутствует, погодите пару секунд, мобилизируем для вас одного\n\nДайте ему новое *ИМЯ*:\n_(Напишите в сообщении)_'
