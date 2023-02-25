@@ -60,7 +60,7 @@ async def process_fight_btn(callback_query: types.CallbackQuery):
         user_info = soldier.load_soldier(user_id)
         sd = soldier.Soldier(user_info)
         if sd.stamina >= stamina_request:  # проверка на хватку стамины
-            text = f'{info}\n\nВы на задании, время ожидания {mins_for_fight/60} часов/часа ({demo_time} сек)'
+            text = f'{info}\n\nВы на задании, время ожидания {round(mins_for_fight/60)} часов/часа ({demo_time} сек)'
             await callback_query.message.edit_text(text, parse_mode='Markdown')
 
             soldier.set_state(user_id, 'fight')
